@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   const login = async (email: string, password: string) => {
-    const response = await api.post<LoginResponse>("/login", {
+    const response = await api.post<LoginResponse>("/users/login", {
       email,
       password,
     });
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = async () => {
-    await api.post("/logout");
+    await api.post("/users/logout");
 
     setAccessToken(null);
     setUser(null);
