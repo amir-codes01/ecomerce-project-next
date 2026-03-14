@@ -3,12 +3,22 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useAuth } from "@/auth/AuthContext";
+import api from "@/api/axios";
 
-export default function LoginPage() {
+interface RegisterResponse {
+  statusCode: number;
+  message: string;
+  data: {
+    id: string;
+    username: string;
+    email: string;
+  };
+}
+
+export default function RegisterPage() {
   const router = useRouter();
-  const { login } = useAuth();
 
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -20,21 +30,27 @@ export default function LoginPage() {
 
     setError(null);
 
-    if (!email || !password) {
-      setError("Email and password are required");
+    if (!username || !email || !password) {
+      setError("All fields are required");
       return;
     }
 
     try {
       setLoading(true);
 
-      await login(email, password);
+      const res = await api.post<RegisterResponse>("/users/register", {
+        username,
+        email,
+        password,
+      });
 
-      router.push("/dashboard");
+      if (res.data.statusCode === 201) {
+        router.push("/login");
+      }
     } catch (err: any) {
       setError(
         err?.response?.data?.message ||
-          "Login failed. Please check your credentials.",
+          "Registration failed. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -45,7 +61,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-100 px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
         <h1 className="mb-6 text-center text-2xl font-bold text-gray-800">
-          Login to your account
+          Create your account
         </h1>
 
         {error && (
@@ -55,6 +71,21 @@ export default function LoginPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Username */}
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-600">
+              Username
+            </label>
+
+            <input
+              type="text"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+            />
+          </div>
+
           {/* Email */}
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-600">
@@ -85,24 +116,24 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Button */}
+          {/* Submit */}
           <button
             type="submit"
             disabled={loading}
             className="w-full rounded-lg bg-blue-600 py-2 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Creating account..." : "Register"}
           </button>
         </form>
 
-        {/* Register link */}
+        {/* Login Link */}
         <p className="mt-6 text-center text-sm text-gray-600">
-          Don’t have an account?{" "}
+          Already have an account?{" "}
           <Link
-            href="/register"
+            href="/login"
             className="font-semibold text-blue-600 hover:underline"
           >
-            Register
+            Login
           </Link>
         </p>
       </div>
