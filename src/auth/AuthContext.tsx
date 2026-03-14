@@ -1,3 +1,5 @@
+"use client";
+
 import api from "@/api/axios";
 import { LoginResponse, User } from "@/types/auth.types";
 import React, { createContext, useContext, useState } from "react";
@@ -16,7 +18,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<void> => {
     const response = await api.post<LoginResponse>("/users/login", {
       email,
       password,
@@ -56,4 +58,5 @@ export const useAuth = () => {
   if (!context) {
     throw new Error("useAuth must be used inside AuthProvider");
   }
+  return context;
 };
