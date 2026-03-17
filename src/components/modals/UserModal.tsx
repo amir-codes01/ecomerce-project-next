@@ -115,8 +115,12 @@ export default function UserModal({
                   className="w-full p-2 border rounded"
                 >
                   <option value="user">User</option>
-                  <option value="admin">Admin</option>
-                  <option value="superadmin">Super Admin</option>
+                  <option value="admin" className="dark:bg-gray-900 ">
+                    Admin
+                  </option>
+                  <option value="superadmin" className="dark:bg-gray-900">
+                    Super Admin
+                  </option>
                 </select>
 
                 <select
@@ -125,8 +129,12 @@ export default function UserModal({
                   onChange={handleChange}
                   className="w-full p-2 border rounded"
                 >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
+                  <option value="Active" className="dark:bg-gray-900 ">
+                    Active
+                  </option>
+                  <option value="suspended" className="dark:bg-gray-900 ">
+                    Suspended
+                  </option>
                 </select>
               </div>
 
