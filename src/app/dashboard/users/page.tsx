@@ -1,16 +1,30 @@
+"use client";
+
+import api from "@/api/axios";
 import DataTable from "@/components/tables/DataTable";
+import { useEffect, useState } from "react";
 
 export default function UsersPage() {
+  const [data, setData] = useState([]);
+
   const columns = [
-    { header: "Name", accessor: "name" },
+    { header: "Name", accessor: "username" },
     { header: "Email", accessor: "email" },
     { header: "Role", accessor: "role" },
   ];
 
-  const data = [
-    { name: "John Doe", email: "john@email.com", role: "Admin" },
-    { name: "Sarah", email: "sarah@email.com", role: "User" },
-  ];
+  async function getUsers() {
+    try {
+      const res = await api.get("/users/");
+      setData(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getUsers();
+  });
 
   return (
     <div>
