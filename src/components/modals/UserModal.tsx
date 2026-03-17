@@ -124,6 +124,10 @@ export default function UserModal({
                 </select>
 
                 <select
+                  disabled={
+                    currentUser?.role !== "superadmin" &&
+                    currentUser?.role !== "admin"
+                  }
                   name="status"
                   value={form.status}
                   onChange={handleChange}

@@ -94,7 +94,7 @@ export default function UsersPage() {
           <span
             className={`w-1.5 h-1.5 rounded-full
             ${value === "Active" ? "bg-green-500" : ""}
-            ${value === "Inactive" ? "bg-gray-500" : ""}
+            ${value === "suspended" ? "bg-gray-500" : ""}
             ${value === "Pending" ? "bg-yellow-500" : ""}
           `}
           />
@@ -173,7 +173,7 @@ export default function UsersPage() {
   useEffect(() => {
     getUsers();
   }, []); // Added empty dependency array to prevent infinite loop
-
+  console.log(user);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
