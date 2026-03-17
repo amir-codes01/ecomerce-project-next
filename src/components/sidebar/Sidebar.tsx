@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { useAuth } from "@/auth/AuthContext";
 
 interface Props {
   closeSidebar?: () => void;
@@ -34,6 +35,9 @@ export default function Sidebar({
   onToggle,
 }: Props) {
   const pathname = usePathname();
+
+  const { user } = useAuth();
+  console.log(user);
 
   return (
     <aside className="h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col">
@@ -123,10 +127,10 @@ export default function Sidebar({
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate">
-                Admin User
+                {user?.username}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                admin@example.com
+                {user?.email}
               </p>
             </div>
           </div>
