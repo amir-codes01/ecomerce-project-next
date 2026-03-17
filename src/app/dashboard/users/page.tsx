@@ -277,10 +277,10 @@ export default function UsersPage() {
           className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4"
         >
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            New This Month
+            Suspended User
           </p>
           <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">
-            12
+            {data.filter((u) => u.status === "suspended").length}
           </p>
         </motion.div>
       </div>
