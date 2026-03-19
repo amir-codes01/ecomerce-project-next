@@ -2,29 +2,74 @@
 
 import { useState, useEffect } from "react";
 import StatCard from "@/components/dashboard/StatCard";
-import { motion } from "framer-motion";
 import { Calendar, Download } from "lucide-react";
-
-const statsData = [
-  {
-    title: "Total Users",
-    value: "1,245",
-    trend: { value: 12, isPositive: true },
-  },
-  {
-    title: "Total Orders",
-    value: "532",
-    trend: { value: 8, isPositive: true },
-  },
-  { title: "Products", value: "89", trend: { value: 3, isPositive: false } },
-  { title: "Revenue", value: "$48.5K", trend: { value: 23, isPositive: true } },
-];
+import api from "@/api/axios";
 
 export default function DashboardPage() {
   const [mounted, setMounted] = useState(false);
+  const [statsData, setStatsData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setMounted(true);
+
+    const fetchStats = async () => {
+      try {
+        const res = await api.get("/dashboard/stats");
+
+        const data = res.data.data;
+
+        if (!data) {
+          console.error("Dashboard data missing", res.data);
+          return;
+        }
+
+        const formatted = [
+          {
+            title: "Total Users",
+            value: data.totals.users.toLocaleString(),
+            trend: {
+              value: Math.abs(data.trends.users).toFixed(1),
+              isPositive: data.trends.users >= 0,
+            },
+          },
+          {
+            title: "Total Orders",
+            value: data.totals.orders.toLocaleString(),
+            trend: {
+              value: Math.abs(data.trends.orders).toFixed(1),
+              isPositive: data.trends.orders >= 0,
+            },
+          },
+          {
+            title: "Products",
+            value: data.totals.products.toLocaleString(),
+            trend: {
+              value: Math.abs(data.trends.products).toFixed(1),
+              isPositive: data.trends.products >= 0,
+            },
+          },
+          {
+            title: "Revenue",
+            value: `$${data.totals.revenue.toLocaleString()}`,
+            trend: {
+              value: Math.abs(data.trends.revenue).toFixed(1),
+              isPositive: data.trends.revenue >= 0,
+            },
+          },
+        ];
+
+        setStatsData(formatted);
+      } catch (error: any) {
+        console.error("Dashboard error:", error);
+
+        // optional toast or UI error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
   }, []);
 
   if (!mounted) return null;
@@ -56,17 +101,22 @@ export default function DashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {statsData.map((stat, index) => (
-          <StatCard
-            key={stat.title}
-            title={stat.title}
-            value={stat.value}
-            trend={stat.trend}
-          />
-        ))}
+        {loading
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-24 rounded-xl bg-gray-200 dark:bg-gray-800 animate-pulse"
+              />
+            ))
+          : statsData.map((stat) => (
+              <StatCard
+                key={stat.title}
+                title={stat.title}
+                value={stat.value}
+                trend={stat.trend}
+              />
+            ))}
       </div>
-
-      {/* Rest of your dashboard content... */}
     </div>
   );
 }
