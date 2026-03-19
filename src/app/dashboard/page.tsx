@@ -4,11 +4,13 @@ import { useState, useEffect } from "react";
 import StatCard from "@/components/dashboard/StatCard";
 import { Calendar, Download } from "lucide-react";
 import api from "@/api/axios";
+import RevenueChart from "@/components/dashboard/RevenueChart";
 
 export default function DashboardPage() {
   const [mounted, setMounted] = useState(false);
   const [statsData, setStatsData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
     setMounted(true);
@@ -23,6 +25,7 @@ export default function DashboardPage() {
           console.error("Dashboard data missing", res.data);
           return;
         }
+        setChartData(data.monthlyRevenue || []);
 
         const formatted = [
           {
@@ -117,6 +120,7 @@ export default function DashboardPage() {
               />
             ))}
       </div>
+      <RevenueChart data={chartData} />
     </div>
   );
 }
