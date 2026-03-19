@@ -8,6 +8,7 @@ import { UserPlus, RefreshCw, Shield, Mail, Calendar } from "lucide-react";
 import toast from "react-hot-toast";
 import UserModal from "@/components/modals/UserModal";
 import { useAuth } from "@/auth/AuthContext";
+import axios from "axios";
 
 export interface User {
   _id?: string;
@@ -160,12 +161,16 @@ export default function UsersPage() {
   async function handleDeleteUser(row: User) {
     if (confirm(`Are you sure you want to delete ${row.username}?`)) {
       try {
-        // await api.delete(`/users/${row._id || row.id}`);
+        await api.delete(`/users/${row._id}`);
         toast.success(`User ${row.username} deleted successfully`);
         // Refresh the list
         getUsers();
       } catch (error) {
-        toast.error("Failed to delete user");
+        if (axios.isAxiosError(error)) {
+          toast.error(error.response?.data?.message || "Request failed");
+        } else {
+          toast.error("Something went wrong");
+        }
       }
     }
   }
