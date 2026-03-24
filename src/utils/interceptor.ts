@@ -1,18 +1,14 @@
 import api from "@/api/axios";
-import axios from "axios";
+import { AxiosError, InternalAxiosRequestConfig } from "axios";
 
 let isRefreshing = false;
 let failedQueue: any[] = [];
 
-const processQueue = (error: any, token: string | null) => {
+const processQueue = (error: any, token: string | null = null) => {
   failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
-    }
+    if (error) prom.reject(error);
+    else prom.resolve(token);
   });
-
   failedQueue = [];
 };
 
@@ -20,56 +16,71 @@ export const setupInterceptors = (
   getToken: () => string | null,
   setToken: (token: string | null) => void,
 ) => {
-  api.interceptors.request.use((config: any) => {
-    const token = getToken();
+  // Clear existing interceptors to prevent duplication on re-renders
+  api.interceptors.request.clear();
+  api.interceptors.response.clear();
 
-    if (token) {
+  api.interceptors.request.use((config) => {
+    const token = getToken();
+    // Use token from closure/state rather than localStorage for speed/security
+    if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
   });
 
   api.interceptors.response.use(
     (response) => response,
-    async (error) => {
-      const originalRequest = error.config;
+    async (error: AxiosError) => {
+      const originalRequest = error.config as InternalAxiosRequestConfig & {
+        _retry?: boolean;
+      };
 
-      if (error.response?.status === 401 && !originalRequest._retry) {
+      // Don't intercept if 401 is from the refresh endpoint itself or already retried
+      if (
+        error.response?.status === 401 &&
+        !originalRequest._retry &&
+        !originalRequest.url?.includes("/users/refreshtoken")
+      ) {
         if (isRefreshing) {
           return new Promise((resolve, reject) => {
             failedQueue.push({ resolve, reject });
-          }).then((token: any) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-            return api(originalRequest);
-          });
+          })
+            .then((token) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              return api(originalRequest);
+            })
+            .catch((err) => Promise.reject(err));
         }
 
         originalRequest._retry = true;
         isRefreshing = true;
 
         try {
-          const res = await axios.post(
-            "http://localhost:3000/api/users/refreshtoken",
+          // withCredentials ensures the refresh cookie is sent
+          const res = await api.post(
+            "/users/refreshtoken",
             {},
             { withCredentials: true },
           );
-
           const newToken = res.data.data.accessToken;
 
+          localStorage.setItem("accessToken", newToken); // Keep storage in sync
           setToken(newToken);
-
           processQueue(null, newToken);
 
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
-
           return api(originalRequest);
-        } catch (err) {
-          processQueue(err, null);
+        } catch (refreshError) {
+          processQueue(refreshError, null);
+          setToken(null);
+          localStorage.removeItem("accessToken");
 
-          window.location.href = "/login";
-
-          return Promise.reject(err);
+          // Optional: Only redirect if we are in the browser
+          if (typeof window !== "undefined") {
+            window.location.href = "/login?expired=true";
+          }
+          return Promise.reject(refreshError);
         } finally {
           isRefreshing = false;
         }
