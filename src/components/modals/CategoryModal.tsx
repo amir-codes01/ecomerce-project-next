@@ -1,12 +1,21 @@
+// components/modals/CategoryModal.tsx
 "use client";
 
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, useRef } from "react";
 import { Dialog, Transition, Listbox } from "@headlessui/react";
-import { X, Folder, Image, ChevronsUpDown, Check } from "lucide-react";
+import {
+  X,
+  Folder,
+  ChevronsUpDown,
+  Check,
+  Upload,
+  Image as ImageIcon,
+  Trash2,
+} from "lucide-react";
 import toast from "react-hot-toast";
 import { Category, CategoryFormData } from "@/types/category";
 import { categoryApi } from "@/api/category";
-import ImageUpload from "@/components/common/ImageUpload";
+import Image from "next/image";
 
 interface Props {
   isOpen: boolean;
@@ -27,10 +36,14 @@ export default function CategoryModal({
 }: Props) {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [formData, setFormData] = useState<CategoryFormData>({
     name: "",
     image: null,
     parent: "",
+    existingImage: undefined,
   });
 
   useEffect(() => {
@@ -42,13 +55,17 @@ export default function CategoryModal({
           typeof category.parent === "object"
             ? category.parent?._id
             : category.parent || "",
+        existingImage: category.image,
       });
+      setPreviewUrl(category.image?.url || null);
     } else {
       setFormData({
         name: "",
         image: null,
         parent: "",
+        existingImage: undefined,
       });
+      setPreviewUrl(null);
     }
     setErrors({});
   }, [mode, category, isOpen]);
@@ -66,6 +83,40 @@ export default function CategoryModal({
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        toast.error("Please select an image file");
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Image size must be less than 5MB");
+        return;
+      }
+
+      setFormData({ ...formData, image: file });
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setFormData({ ...formData, image: null, existingImage: undefined });
+    setPreviewUrl(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -77,6 +128,7 @@ export default function CategoryModal({
       const submitData = {
         name: formData.name,
         parent: formData.parent || null,
+        image: formData.image,
       };
 
       if (mode === "create") {
@@ -263,20 +315,61 @@ export default function CategoryModal({
                     </div>
                   )}
 
-                  {/* Image Upload (Optional) */}
+                  {/* Image Upload */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Category Image (Optional)
                     </label>
-                    <ImageUpload
-                      image={formData.image}
-                      onImageSelect={(file) =>
-                        setFormData({ ...formData, image: file })
-                      }
-                      onImageRemove={() =>
-                        setFormData({ ...formData, image: null })
-                      }
-                    />
+
+                    <div className="space-y-3">
+                      {/* Image Preview */}
+                      {previewUrl && (
+                        <div className="relative inline-block">
+                          <div className="w-32 h-32 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                            <Image
+                              src={previewUrl}
+                              alt="Preview"
+                              width={128}
+                              height={128}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={handleRemoveImage}
+                            className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-lg"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Upload Button */}
+                      {!previewUrl && (
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="flex items-center gap-2 px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                        >
+                          <Upload size={18} className="text-gray-500" />
+                          <span className="text-sm text-gray-700 dark:text-gray-300">
+                            Upload Image
+                          </span>
+                        </button>
+                      )}
+
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageSelect}
+                        className="hidden"
+                      />
+
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Recommended: Square image, max 5MB (JPG, PNG, WebP)
+                      </p>
+                    </div>
                   </div>
 
                   {/* Buttons */}
@@ -291,7 +384,7 @@ export default function CategoryModal({
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg transition-all duration-200 disabled:opacity-50"
+                      className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {loading
                         ? "Saving..."

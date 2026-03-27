@@ -1,3 +1,4 @@
+// app/dashboard/categories/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -8,10 +9,10 @@ import {
   FolderTree,
   Edit,
   Trash2,
-  Eye,
   ChevronRight,
   ChevronDown,
   Folder,
+  Image as ImageIcon,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { categoryApi } from "@/api/category";
@@ -142,13 +143,14 @@ export default function CategoriesPage() {
             {!category.subCategories?.length && <div className="w-6" />}
 
             {category.image?.url ? (
-              <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800">
+              <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
                 <Image
                   src={category.image.url}
                   alt={category.name}
                   width={40}
                   height={40}
-                  className="object-cover"
+                  className="object-cover w-full h-full"
+                  unoptimized={process.env.NODE_ENV === "development"}
                 />
               </div>
             ) : (
@@ -311,10 +313,10 @@ export default function CategoriesPage() {
           className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4"
         >
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Subcategories
+            With Images
           </p>
           <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">
-            {categories.filter((c) => c.parent).length}
+            {categories.filter((c) => c.image?.url).length}
           </p>
         </motion.div>
       </div>
