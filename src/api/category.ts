@@ -16,21 +16,41 @@ export const categoryApi = {
   // Get single category by slug
   getCategoryBySlug: async (slug: string): Promise<Category> => {
     const response = await api.get(`/category/${slug}`);
-    return response.data.data[0];
-  },
-
-  // Create new category
-  createCategory: async (data: CreateCategoryDto): Promise<Category> => {
-    const response = await api.post("/category", data);
     return response.data.data;
   },
 
-  // Update category
+  // Create new category with image
+  createCategory: async (data: CreateCategoryDto): Promise<Category> => {
+    const formData = new FormData();
+    formData.append("name", data.name);
+    if (data.parent) formData.append("parent", data.parent);
+    if (data.image) formData.append("image", data.image);
+
+    const response = await api.post("/category", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data.data;
+  },
+
+  // Update category with optional image
   updateCategory: async (
     slug: string,
     data: UpdateCategoryDto,
   ): Promise<Category> => {
-    const response = await api.put(`/category/${slug}`, data);
+    const formData = new FormData();
+    if (data.name) formData.append("name", data.name);
+    if (data.parent !== undefined) formData.append("parent", data.parent || "");
+    if (data.image) formData.append("image", data.image);
+    if (data.isActive !== undefined)
+      formData.append("isActive", String(data.isActive));
+
+    const response = await api.put(`/category/${slug}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return response.data.data;
   },
 
