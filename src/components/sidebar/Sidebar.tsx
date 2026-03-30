@@ -26,7 +26,7 @@ const menu = [
   { name: "Products", href: "/dashboard/products", icon: Package },
   { name: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
   { name: "Categories", href: "/dashboard/categories", icon: FolderTree },
-  { name: "Analytics", href: "/dashboard/analytics", icon: BarChart3 },
+  { name: "AuditLogs", href: "/dashboard/audit-logs", icon: BarChart3 },
 ];
 
 export default function Sidebar({
