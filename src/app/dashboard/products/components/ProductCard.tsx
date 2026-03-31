@@ -49,9 +49,9 @@ export function ProductCard({
   const [showQuickViewModal, setShowQuickViewModal] = useState(false);
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("en-PK", {
       style: "currency",
-      currency: "USD",
+      currency: "PKR",
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(price);
@@ -364,7 +364,7 @@ export function ProductCard({
           )}
 
           {/* Price Section */}
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center flex-wrap justify-between mb-3">
             <div>
               {product.discountPrice ? (
                 <div className="flex items-center gap-2">
