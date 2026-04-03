@@ -35,7 +35,7 @@ export default function UsersPage() {
       sortable: true,
       cell: (value: string, row: User) => (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold text-sm">
+          <div className="w-8 h-8 rounded-full bg-linear-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold text-sm">
             {value.charAt(0).toUpperCase()}
           </div>
           <div>
