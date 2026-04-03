@@ -2,7 +2,16 @@
 "use client";
 
 import { Fragment, useState, useEffect, useRef } from "react";
-import { Dialog, Transition, Listbox, Switch } from "@headlessui/react";
+import {
+  Dialog,
+  Transition,
+  Listbox,
+  Switch,
+  DialogPanel,
+  DialogTitle,
+  ListboxButton,
+  ListboxOptions,
+} from "@headlessui/react";
 import {
   X,
   Package,
@@ -286,12 +295,12 @@ export default function ProductModal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-4xl max-h-[90vh] overflow-y-auto transform overflow-hidden rounded-2xl bg-white dark:bg-gray-900 shadow-xl transition-all">
+              <DialogPanel className="w-full max-w-4xl max-h-[90vh] overflow-y-auto transform overflow-hidden rounded-2xl bg-white dark:bg-gray-900 shadow-xl transition-all">
                 <div className="sticky top-0 flex items-center justify-between border-b border-gray-200 dark:border-gray-800 p-6 bg-white dark:bg-gray-900 z-10">
-                  <Dialog.Title className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                  <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                     <Package size={24} />
                     {mode === "create" ? "Create Product" : "Edit Product"}
-                  </Dialog.Title>
+                  </DialogTitle>
                   <button
                     onClick={onClose}
                     className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -351,7 +360,7 @@ export default function ProductModal({
                         }
                       >
                         <div className="relative">
-                          <Listbox.Button
+                          <ListboxButton
                             className={`relative w-full cursor-default rounded-lg bg-gray-50 dark:bg-gray-800 border py-2 pl-3 pr-10 text-left
                             ${errors.category ? "border-red-500" : "border-gray-200 dark:border-gray-700"}`}
                           >
@@ -368,14 +377,14 @@ export default function ProductModal({
                                 className="text-gray-400"
                               />
                             </span>
-                          </Listbox.Button>
+                          </ListboxButton>
                           <Transition
                             as={Fragment}
                             leave="transition ease-in duration-100"
                             leaveFrom="opacity-100"
                             leaveTo="opacity-0"
                           >
-                            <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 py-1 shadow-lg">
+                            <ListboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 py-1 shadow-lg">
                               {categories.map((cat) => (
                                 <Listbox.Option
                                   key={cat._id}
@@ -408,7 +417,7 @@ export default function ProductModal({
                                   )}
                                 </Listbox.Option>
                               ))}
-                            </Listbox.Options>
+                            </ListboxOptions>
                           </Transition>
                         </div>
                       </Listbox>
@@ -689,7 +698,7 @@ export default function ProductModal({
                     </button>
                   </div>
                 </form>
-              </Dialog.Panel>
+              </DialogPanel>
             </Transition.Child>
           </div>
         </div>
