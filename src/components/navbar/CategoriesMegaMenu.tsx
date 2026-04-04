@@ -1,28 +1,55 @@
 "use client";
 
+import { categoryApi } from "@/api/category";
 import { useClickOutside } from "@/hooks/useClickOutside";
+import { Category } from "@/types/category";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
-import { useRef, useState } from "react";
-
-const categories = {
-  Electronics: [
-    "Smartphones",
-    "Laptops",
-    "Headphones",
-    "Cameras",
-    "Accessories",
-  ],
-  Clothing: ["Men's", "Women's", "Kids'", "Shoes", "Accessories"],
-  "Home & Kitchen": ["Furniture", "Cookware", "Decor", "Appliances", "Bedding"],
-  Sports: ["Fitness", "Outdoor", "Team Sports", "Swimming", "Yoga"],
-};
+import { useEffect, useRef, useState } from "react";
 
 export default function CategoriesMegaMenu() {
+  const [categories, setCategories] = useState<Record<string, any[]>>({});
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState(true);
   useClickOutside(menuRef, () => setIsOpen(false));
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        const response = await categoryApi.getAllCategories();
+        console.log("Categories from API:", response);
+
+        const mockCategories = response.filter((cat) => cat.isActive !== false);
+
+        const grouped: Record<string, any[]> = {};
+
+        const parents = mockCategories.filter((cat) => cat.parent === null);
+        parents.forEach((parent) => {
+          grouped[parent.name] = mockCategories
+            .filter((cat) => {
+              const id = cat.parent as Category | null;
+              return id?._id === parent._id;
+            })
+            .map((sub) => ({
+              ...sub,
+              parentSlug: parent.slug,
+            }));
+        });
+        console.log(grouped);
+
+        setCategories(grouped);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <div className="relative" ref={menuRef}>
@@ -45,7 +72,7 @@ export default function CategoriesMegaMenu() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             onMouseLeave={() => setIsOpen(false)}
-            className="absolute left-0 mt-2 w-[600px] bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+            className="absolute -left-100 mt-2 w-150 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
           >
             <div className="grid grid-cols-4 gap-6 p-6">
               {Object.entries(categories).map(([category, subcategories]) => (
@@ -54,17 +81,26 @@ export default function CategoriesMegaMenu() {
                     {category}
                   </h3>
                   <ul className="space-y-2">
-                    {subcategories.map((sub) => (
-                      <li key={sub}>
+                    {subcategories.slice(0, 10).map((sub) => (
+                      <li key={sub._id}>
                         <Link
-                          href={`/category/${category.toLowerCase()}/${sub.toLowerCase()}`}
+                          href={`/category/${sub.parentSlug}/${sub.slug}`}
                           className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                           onClick={() => setIsOpen(false)}
                         >
-                          {sub}
+                          {sub.name}
                         </Link>
                       </li>
                     ))}
+                    {subcategories.length > 10 && (
+                      <Link
+                        href={`/category/${category.toLowerCase().replace("", "-")}`}
+                        className="block text-xs text-blue-600 dark:text-blue-400 hover:underline mt-1"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        View all ({subcategories.length})...
+                      </Link>
+                    )}
                   </ul>
                 </div>
               ))}

@@ -11,7 +11,7 @@ import { useCartStore } from "@/store/useCartStore";
 import MobileMenu from "./MobileMenu";
 
 const navLinks = [
-  { href: "/shop", label: "Shop" },
+  { href: "/", label: "Shop" },
   { href: "/categories", label: "Categories" },
   { href: "/deals", label: "Deals", highlight: true },
   { href: "/about", label: "About" },
