@@ -72,7 +72,7 @@ export default function CategoriesMegaMenu() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             onMouseLeave={() => setIsOpen(false)}
-            className="absolute -left-100 mt-2 w-150 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
+            className="absolute -left-50 mt-2 w-150 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50"
           >
             <div className="grid grid-cols-4 gap-6 p-6">
               {Object.entries(categories).map(([category, subcategories]) => (
