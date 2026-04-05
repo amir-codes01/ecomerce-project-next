@@ -5,10 +5,11 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import SearchBar from "./SearchBar";
 import CategoriesMegaMenu from "./CategoriesMegaMenu";
-import { Heart, ShoppingBag } from "lucide-react";
+import { Heart, ShoppingBag, User } from "lucide-react";
 import { useWishlistStore } from "@/store/useWishlistStore";
 import { useCartStore } from "@/store/useCartStore";
 import MobileMenu from "./MobileMenu";
+import UserDropdown from "./UserDropdown";
 
 const navLinks = [
   { href: "/", label: "Shop" },
@@ -86,6 +87,7 @@ export default function Navbar() {
             <div className="hidden lg:block">
               <CategoriesMegaMenu />
             </div>
+            <UserDropdown />
             <Link
               href="/wishlist"
               className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
