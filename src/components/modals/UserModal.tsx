@@ -27,7 +27,7 @@ export default function UserModal({
     username: "",
     email: "",
     role: "user",
-    status: "Active",
+    status: "active",
   });
 
   const [loading, setLoading] = useState(false);
@@ -133,7 +133,7 @@ export default function UserModal({
                   onChange={handleChange}
                   className="w-full p-2 border rounded"
                 >
-                  <option value="Active" className="dark:bg-gray-900 ">
+                  <option value="active" className="dark:bg-gray-900 ">
                     Active
                   </option>
                   <option value="suspended" className="dark:bg-gray-900 ">

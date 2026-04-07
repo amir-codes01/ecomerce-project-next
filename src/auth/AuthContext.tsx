@@ -100,7 +100,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       localStorage.setItem("accessToken", token);
       setAccessToken(token);
       setUser(userData);
-      router.push("/dashboard"); // Use router for SPA transitions
+      if (userData?.role === "user") {
+        router.push("/");
+      } else {
+        router.push("/dashboard");
+      } // Use router for SPA transitions
     } catch (error: any) {
       console.error(
         "Login failed:",
