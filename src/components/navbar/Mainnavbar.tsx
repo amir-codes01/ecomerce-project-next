@@ -13,7 +13,7 @@ import UserDropdown from "./UserDropdown";
 
 const navLinks = [
   { href: "/", label: "Shop" },
-  { href: "/categories", label: "Categories" },
+  // { href: "/categories", label: "Categories" },
   { href: "/deals", label: "Deals", highlight: true },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
@@ -33,7 +33,7 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   return (
-    <motion.div
+    <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
@@ -45,11 +45,11 @@ export default function Navbar() {
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="text-2xl font-bold  bg-blue-600  bg-clip-text text-transparent">
               ShopHub
             </span>
           </Link>
-          <div className="hidden lg:flex items-center space-x-1">
+          <div className="hidden lg:flex items-center space-x-1 ml-5">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
@@ -79,14 +79,14 @@ export default function Navbar() {
                 </Link>
               );
             })}
+            <div className="hidden lg:block">
+              <CategoriesMegaMenu />
+            </div>
           </div>
           <div className="hidden lg:block flex-1 max-w-md mx-4">
             <SearchBar />
           </div>
           <div className="flex items-center gap-2">
-            <div className="hidden lg:block">
-              <CategoriesMegaMenu />
-            </div>
             <UserDropdown />
             <Link
               href="/wishlist"
@@ -116,6 +116,6 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
-    </motion.div>
+    </motion.header>
   );
 }

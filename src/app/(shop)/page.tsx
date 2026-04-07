@@ -1,5 +1,9 @@
-import Image from "next/image";
+import HeroSection from "@/components/shop/HeroSection";
 
 export default function Home() {
-  return <h1>helo</h1>;
+  return (
+    <main className="min-h-screen">
+      <HeroSection />
+    </main>
+  );
 }
