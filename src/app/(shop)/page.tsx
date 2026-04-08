@@ -1,11 +1,14 @@
 import CategoryGrid from "@/components/shop/CategoryGrid";
 import HeroSection from "@/components/shop/HeroSection";
+import ProductCarousel from "@/components/shop/ProductCarousel";
 
 export default function Home() {
   return (
-    <main className="min-h-screen">
+    <>
       <HeroSection />
       <CategoryGrid />
-    </main>
+      <ProductCarousel title="Best Sellers" type="bestsellers" limit={6} />
+      <ProductCarousel title="New Arrivals" type="new" />
+    </>
   );
 }

@@ -38,7 +38,6 @@ export default function CategoryGrid() {
     try {
       setLoading(true);
       const response = await categoryApi.getAllCategories();
-      console.log("Categories from API:", response);
 
       // Filter only active categories
       const activeCategories = response.filter((cat) => cat.isActive !== false);
@@ -57,7 +56,6 @@ export default function CategoryGrid() {
         }),
       );
 
-      console.log(mappedCategories);
       setCategories(mappedCategories);
     } catch (error) {
       console.error("Failed to fetch categories:", error);
