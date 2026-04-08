@@ -24,6 +24,11 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const cartCount = useCartStore((state) => state.getTotalCount());
   const wishlistCount = useWishlistStore((state) => state.getTotalCount());
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,6 +37,7 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  if (!mounted) return null;
   return (
     <motion.header
       initial={{ y: -100 }}

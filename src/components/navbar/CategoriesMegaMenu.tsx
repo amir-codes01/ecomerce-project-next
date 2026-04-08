@@ -20,7 +20,6 @@ export default function CategoriesMegaMenu() {
       try {
         setLoading(true);
         const response = await categoryApi.getAllCategories();
-        console.log("Categories from API:", response);
 
         const mockCategories = response.filter((cat) => cat.isActive !== false);
 
@@ -38,7 +37,6 @@ export default function CategoriesMegaMenu() {
               parentSlug: parent.slug,
             }));
         });
-        console.log(grouped);
 
         setCategories(grouped);
       } catch (error) {
