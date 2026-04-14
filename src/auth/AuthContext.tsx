@@ -104,7 +104,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         router.push("/");
       } else {
         router.push("/dashboard");
-      } // Use router for SPA transitions
+      }
     } catch (error: any) {
       console.error(
         "Login failed:",
