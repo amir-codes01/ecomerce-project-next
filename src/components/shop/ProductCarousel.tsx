@@ -144,6 +144,7 @@ export default function ProductCarousel({
       price: product.discountPrice || product.price,
       quantity: 1,
       image: product.images[0]?.url,
+      slug: product.slug,
     };
     addItem(cartItem);
     setAddedToCart((prev) => new Set(prev).add(product._id));
