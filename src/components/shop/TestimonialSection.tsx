@@ -49,9 +49,8 @@ export default function TestimonialSection({
     try {
       setLoading(true);
       setError(null);
-      setTimeout(() => {
-        setTestimonials(getMockTestimonials());
-      }, 10000);
+
+      setTestimonials(getMockTestimonials());
     } catch (error) {
       console.error("Failed to fetch testimonials:", error);
       setError("Failed to load testimonials. Please try again later.");
