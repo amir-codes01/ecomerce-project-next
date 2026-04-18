@@ -1,4 +1,5 @@
 import Navbar from "@/components/navbar/Mainnavbar";
+import Footer from "@/components/shop/Footer";
 
 export default function WithNavbarLayout({
   children,
@@ -8,7 +9,10 @@ export default function WithNavbarLayout({
   return (
     <>
       <Navbar />
-      <main className="min-h-screen">{children}</main>
+      <main className="min-h-screen">
+        {children}
+        <Footer />
+      </main>
     </>
   );
 }
