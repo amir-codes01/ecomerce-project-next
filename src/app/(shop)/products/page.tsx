@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { Category } from "@/types/category";
 import Link from "next/link";
 import {
   Search,
@@ -37,6 +38,7 @@ import {
   toggleProductInWishlist,
 } from "@/utils/productConverter";
 import toast from "react-hot-toast";
+import { categoryApi } from "@/api/category";
 
 // Types
 interface Filters {
@@ -57,14 +59,14 @@ interface PriceRange {
 }
 
 // Categories (you can fetch these from API)
-const categories = [
-  { id: "", name: "All Categories" },
-  { id: "electronics", name: "Electronics" },
-  { id: "fashion", name: "Fashion" },
-  { id: "home", name: "Home & Living" },
-  { id: "beauty", name: "Beauty & Care" },
-  { id: "sports", name: "Sports & Outdoors" },
-];
+// const categories = [
+//   { id: "", name: "All Categories" },
+//   { id: "electronics", name: "Electronics" },
+//   { id: "fashion", name: "Fashion" },
+//   { id: "home", name: "Home & Living" },
+//   { id: "beauty", name: "Beauty & Care" },
+//   { id: "sports", name: "Sports & Outdoors" },
+// ];
 
 const sortOptions = [
   { value: "createdAt", label: "Newest First", icon: Clock },
@@ -130,10 +132,30 @@ export default function ProductsPage() {
     min: 0,
     max: 1000,
   });
+  const [categories, setCategories] = useState<Category[]>([]);
 
   // Store hooks
   const { addItem: addToCart, isInCart } = useCartStore();
   const { toggleItem: toggleWishlist, isInWishlist } = useWishlistStore();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        const response = await categoryApi.getAllCategories();
+
+        const mockCategories = response.filter((cat) => cat.isActive !== false);
+
+        setCategories(mockCategories);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   // Fetch products
   const fetchProducts = useCallback(async () => {
@@ -373,7 +395,7 @@ export default function ProductsPage() {
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                 >
                   {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
+                    <option key={cat._id} value={cat._id}>
                       {cat.name}
                     </option>
                   ))}
@@ -568,7 +590,7 @@ export default function ProductsPage() {
                 {filters.category && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm">
                     Category:{" "}
-                    {categories.find((c) => c.id === filters.category)?.name}
+                    {categories.find((c) => c._id === filters.category)?.name}
                     <button onClick={() => handleFilterChange("category", "")}>
                       <X className="h-3 w-3" />
                     </button>
@@ -1014,7 +1036,7 @@ export default function ProductsPage() {
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
                     >
                       {categories.map((cat) => (
-                        <option key={cat.id} value={cat.id}>
+                        <option key={cat._id} value={cat._id}>
                           {cat.name}
                         </option>
                       ))}
