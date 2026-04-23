@@ -14,7 +14,7 @@ import UserDropdown from "./UserDropdown";
 const navLinks = [
   { href: "/", label: "Shop" },
   // { href: "/categories", label: "Categories" },
-  { href: "/deals", label: "Deals", highlight: true },
+  { href: "/products", label: "Products", highlight: true },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
