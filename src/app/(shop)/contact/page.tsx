@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import {
   ArrowRight,
+  Award,
   Briefcase,
   CheckCircle,
   Clock,
@@ -15,6 +16,8 @@ import {
   MessageCircle,
   Phone,
   Send,
+  Shield,
+  Truck,
   Twitter,
   User,
   Youtube,
@@ -445,6 +448,118 @@ export default function ContactPage() {
               </div>
             </motion.div>
           </div>
+        </div>
+      </section>
+      <section className="py-20">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+              Find quick answers to common questions
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {faqs.map((faq, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm hover:shadow-lg transition-all"
+              >
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                  {faq.question}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-400">{faq.answer}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center mt-8">
+            <Link
+              href="/faqs"
+              className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:gap-3 transition-all font-semibold"
+            >
+              View All FAQs
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-12 bg-gray-50 dark:bg-gray-800/50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div>
+              <Shield className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+              <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                Secure Payment
+              </div>
+              <div className="text-xs text-gray-600 dark:text-gray-400">
+                100% protected
+              </div>
+            </div>
+            <div>
+              <Truck className="h-8 w-8 text-green-600 mx-auto mb-2" />
+              <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                Fast Shipping
+              </div>
+              <div className="text-xs text-gray-600 dark:text-gray-400">
+                Free over $100
+              </div>
+            </div>
+            <div>
+              <Award className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+              <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                Quality Guarantee
+              </div>
+              <div className="text-xs text-gray-600 dark:text-gray-400">
+                30-day returns
+              </div>
+            </div>
+            <div>
+              <Headphones className="h-8 w-8 text-orange-600 mx-auto mb-2" />
+              <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                24/7 Support
+              </div>
+              <div className="text-xs text-gray-600 dark:text-gray-400">
+                Dedicated team
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 bg-linear-to-r from-blue-600 to-purple-600">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              Need Immediate Assistance?
+            </h2>
+            <p className="text-white/90 mb-6">
+              Our customer support team is ready to help you 24/7
+            </p>
+            <Link
+              href="tel:+15551234567"
+              className="inline-flex items-center gap-2 px-8 py-3 bg-white text-gray-900 rounded-lg font-semibold hover:shadow-xl transition-all hover:scale-105"
+            >
+              <Phone className="h-4 w-4" />
+              Call Us Now
+            </Link>
+          </motion.div>
         </div>
       </section>
     </div>
